@@ -1,7 +1,8 @@
 # Job Start Up
 
 > 취업준비생과 기업 간의 연결을 강화시킨 채용사이트
-![image](https://github.com/orchidHYE/JobStartUp/assets/131605360/f3039c2f-37a3-4fee-ac1a-dc65b1fb2887)
+![image](https://github.com/orchidHYE/JobStartUp/assets/131605360/46138611-99ee-422f-b4d3-4554a6a2564e)
+
 
 ## 1. 프로젝트 소개
 기업회원은 박람회 참가신청을 해야만 채용공고 업로드 자격이 주어진다.
@@ -9,13 +10,13 @@
 취업준비생과 기업 간의 연결을 강화하고, 박람회 참가자들에게 다양한 취업 기회를 제공한다.
 
 ## 2. 개발환경
-![Blue and White Project Proposal - Presentation](https://github.com/orchidHYE/JobStartUp/assets/131605360/1faab57e-f54c-48cd-9ce9-47aa9c551002)
+![Blue and White Project Proposal - Presentation](https://github.com/orchidHYE/JobStartUp/assets/131605360/ea5dcd73-f929-4fa2-bbc9-7d7a60b5accc)
 
 ## 3. 개발일정
-![Blue and White Project Proposal - Presentation (1)](https://github.com/orchidHYE/JobStartUp/assets/131605360/938af3da-3be0-4798-8dd1-c996aac26f0b)
+![Blue and White Project Proposal - Presentation (1)](https://github.com/orchidHYE/JobStartUp/assets/131605360/0db2393e-11cf-4d9b-be63-0dbc243493a8)
 
 ## 4. 팀원소개 및 역할분담
-![Blue and White Project Proposal - Presentation (2)](https://github.com/orchidHYE/JobStartUp/assets/131605360/1aa057d3-812f-4c23-9626-16b646df023d)
+![Blue and White Project Proposal - Presentation (2)](https://github.com/orchidHYE/JobStartUp/assets/131605360/4fcdaa9d-2450-435a-8e0b-094fd04028f2)
 
 
 # 5. 기능
