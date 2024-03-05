@@ -1,6 +1,6 @@
 # Job Start Up
 
-> 취업준비생과 기업 간의 연결을 강화시킨 채용사이트 
+> 취업준비생과 기업 간의 연결을 강화시킨 채용사이트
 ![image](https://github.com/orchidHYE/JobStartUp/assets/131605360/f3039c2f-37a3-4fee-ac1a-dc65b1fb2887)
 
 ## 1. 프로젝트 소개
