@@ -308,7 +308,7 @@
                             </div>
                         </div>
 
-                        <!-- 첨부파일 및 URL input -->
+                        <!-- 첨부파일 및 URL -->
                         <div class="end-container">
                             <div class="col-sm-12 d-flex align-items-center justify-content-between">
                                 <p class="fs-6 fw-bold text-dark mb-5 custom-text-style">기타 첨부파일</p>

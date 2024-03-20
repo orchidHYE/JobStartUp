@@ -122,6 +122,20 @@
                         </div>
                     </div>
 
+                    <!-- 첨부파일 및 URL -->
+                    <div class="end-container">
+                        <div class="col-sm-12 d-flex align-items-center justify-content-between">
+                            <p class="fs-6 fw-bold text-dark mb-5 custom-text-style">기타 첨부파일</p>
+                        </div>
+                        <div class="mb-3">
+                            <label for="resumeOrgNameFile" class="form-label"></label>
+                            <input type="file" name="resumeOrgNameFile" id="resumeOrgNameFile" class="form-control"/>
+                        </div>
+                        <div class="form-floating mb-5">
+                            <input type="text" name="resume_url" id="resume_url" class="form-control"/>
+                            <label for="resume_url">URL</label>
+                        </div>
+                    </div>
 
                     <input type="submit" name="submitBtn" id="submitBtn" value="등록" class="btn btn-primary btn-lg col-lg-6" style="background-color: #7A41FF; border: none;">
                 </form>
