@@ -30,21 +30,3 @@ public enum UserRole {
         return permissions;
     }
 }
-
-//@Getter
-//public enum UserRole {
-//    COMMON("COMMON"),
-//    COMPANY("COMPANY"),
-//    ADMIN("ADMIN"),
-//    UNAPPROVED_COMPANY("UNAPPROVED_COMPANY");
-//
-//    private final String permission;
-//
-//    UserRole(String permission) {
-//        this.permission = permission;
-//    }
-//
-//    public SimpleGrantedAuthority getGrantedAuthority() {
-//        return new SimpleGrantedAuthority(permission);
-//    }
-//}
