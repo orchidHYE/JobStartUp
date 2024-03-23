@@ -9,54 +9,6 @@
         </foreach>
     </insert>
 
-    <!--
-     <insert id="insertLanguage" parameterType="java.util.List">
-        INSERT INTO LANGUAGE(RESUME_NO, LANG_NAME, LANG_LEVEL)
-        <foreach collection="languageDTOList" item="languageDTO" separator=" UNION ALL ">
-            SELECT #{languageDTO.resume_no}, #{languageDTO.lang_name}, #{languageDTO.lang_level} FROM dual
-        </foreach>
-    </insert>
-     -->
-
-    <!--<insert id="insertLanguage" parameterType="java.util.List">
-        &lt;!&ndash; 시퀀스 값을 가져오는 쿼리 &ndash;&gt;
-        <selectKey keyProperty="languageDTOList.lang_no" order="BEFORE" resultType="int">
-            SELECT LANGUAGE_SEQ.NEXTVAL FROM DUAL
-        </selectKey>
-
-        &lt;!&ndash; 언어 데이터 삽입 쿼리 &ndash;&gt;
-        <foreach collection="languageDTOList" item="languageDTO" separator=" UNION ALL ">
-            INSERT INTO LANGUAGE(RESUME_NO, LANG_NO, LANG_NAME, LANG_LEVEL)
-            VALUES (#{languageDTO.resume_no}, #{languageDTO.lang_no}, #{languageDTO.lang_name}, #{languageDTO.lang_level})
-        </foreach>
-    </insert>-->
-
-    <!--<insert id="insertLanguage" parameterType="java.util.List">
-        <foreach collection="languageDTOList" item="languageDTO">
-            INSERT INTO LANGUAGE(RESUME_NO, LANG_NO, LANG_NAME, LANG_LEVEL)
-            VALUES (#{languageDTO.resume_no}, LANGUAGE_SEQ.NEXTVAL, #{languageDTO.lang_name}, #{languageDTO.lang_level})
-        </foreach>
-    </insert>-->
-
-    <!--<insert id="insertLanguageBatch" parameterType="java.util.List">
-        <selectKey keyProperty="languageDTOList[0].resume_no" resultType="java.lang.Long" order="BEFORE">
-            SELECT LANGUAGE_SEQ.NEXTVAL AS resume_no FROM DUAL
-        </selectKey>
-        INSERT ALL
-        <foreach collection="languageDTOList" item="languageDTO" separator=" "
-                 close=" " open=" " index="idx">
-            INTO LANGUAGE(RESUME_NO, LANG_NAME, LANG_LEVEL)
-            VALUES (#{languageDTO.resume_no, jdbcType=NUMERIC}, #{languageDTO.lang_name, jdbcType=VARCHAR}, #{languageDTO.lang_level, jdbcType=VARCHAR})
-        </foreach>
-        SELECT * FROM DUAL
-    </insert>-->
-
-    <!-- SELECT MAX LANG_NO  -->
-    <select id="getMaxLangNo" resultType="int">
-        SELECT MAX(LANG_NO)
-        FROM LANGUAGE
-    </select>
-
     <!-- 등록한 이력서 시퀀스 값 받아오기 -->
     <select id="getLanguageSequence" resultType="int">
         <![CDATA[

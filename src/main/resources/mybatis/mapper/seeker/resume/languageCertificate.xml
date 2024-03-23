@@ -9,7 +9,6 @@
         </foreach>
     </insert>
 
-
     <delete id="deleteLanguageCertificate" parameterType="int">
         <![CDATA[
         DELETE LANGUAGE_CERTIFICATE
