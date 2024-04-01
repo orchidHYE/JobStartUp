@@ -1,9 +1,17 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="cPath" value="<%=request.getContextPath() %>"/>
 <html>
 <head>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <!-- Bootstrap Datepicker 라이브러리 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha512-L/ypxc7go77iDTEWiMFo4QP+/Seu8/rvULSrW7jfxx3naYYcnvEBA/2lJuANCa9sI6F6sBYbnFrcvOcXS/VBWQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha512-mSYL/HkXjPjXhD9mD7Wg1blwo0Bu+kJ5pqnlpSVk3MUfV1jlTEKFlj/dTSTWtbXYvhcSHQjJjhkmYvQmupfHNsw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
     <%-- 레이아웃 위해 추가 --%>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -85,7 +93,7 @@
                             <label for="cer_issuer">발급처</label>
                         </div>
                         <div class="form-floating mb-3 col-sm">
-                            <input type="date" name="certificateDTOList[0].cer_date" id="cer_date" class="form-control" value="${modifyResumeDTO.certificateDTOList[0].cer_date}"/>
+                            <input type="text" name="certificateDTOList[0].cer_date" id="cer_date" class="form-control" value="<fmt:formatDate value="${modifyResumeDTO.certificateDTOList[0].cer_date}" pattern="yyyy.MM.dd"/>"/>
                             <label for="cer_date">취득일자</label>
                         </div>
                     </div>
@@ -117,7 +125,7 @@
                             <label for="lang_cer_grade">등급 및 점수</label>
                         </div>
                         <div class="form-floating mb-3 col-sm">
-                            <input type="date" name="languageCertificateDTOList[0].lang_cer_date" id="lang_cer_date" class="form-control" value="${modifyResumeDTO.languageCertificateDTOList[0].lang_cer_date}"/>
+                            <input type="text" name="languageCertificateDTOList[0].lang_cer_date" id="lang_cer_date" class="form-control" value="<fmt:formatDate value="${modifyResumeDTO.languageCertificateDTOList[0].lang_cer_date}" pattern="yyyy.MM.dd"/>"/>
                             <label for="lang_cer_date">취득일자</label>
                         </div>
                     </div>
