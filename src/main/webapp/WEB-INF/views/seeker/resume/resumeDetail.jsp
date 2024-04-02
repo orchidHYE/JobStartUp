@@ -162,7 +162,7 @@
                                         </div>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <div name="careerDTOList[0].career_work" id="career_work0" class="form-control" style="width: 942px; height: 137px">${career.career_work}</div>
+                                        <div name="careerDTOList[0].career_work" id="career_work0" class="form-control" style="width: auto; height: 137px">${career.career_work}</div>
                                         <label for="career_work0">담당업무</label>
                                     </div>
                                 </div>
@@ -202,11 +202,11 @@
 
 
                     <!-- 언어 섹션 -->
-                    <c:forEach items="${resumeDetail.languageDTOList}" var="language">
-                        <div class="item-container">
-                            <div class="col-sm-12 d-flex align-items-center justify-content-between mb-5">
-                                <p class="fs-6 fw-bold text-dark custom-text-style">언어</p>
-                            </div>
+                    <div class="item-container">
+                        <div class="col-sm-12 d-flex align-items-center justify-content-between mb-5">
+                            <p class="fs-6 fw-bold text-dark custom-text-style">언어</p>
+                        </div>
+                        <c:forEach items="${resumeDetail.languageDTOList}" var="language" varStatus="loof">
                             <div id="languageContainer">
                                 <div class="languageBlock">
                                     <div class="row g-2">
@@ -220,31 +220,38 @@
                                         </div>
                                     </div>
                                     <c:forEach items="${resumeDetail.languageCertificateDTOList}" var="languageCertificate">
-                                        <%-- 어학 자격증 --%>
-                                        <div id="langCerContainer">
-                                            <div class="langCerBlock">
-                                                <div class="row g-3">
-                                                    <div class="form-floating mb-6 col-sm-6">
-                                                        <div name="languageCertificateDTOList[0].lang_cer_exam" id="lang_cer_exam0" class="form-control">${languageCertificate.lang_cer_exam}</div>
-                                                        <label for="lang_cer_exam0">어학 자격증명</label>
-                                                    </div>
-                                                    <div class="form-floating mb-3 col-sm">
-                                                        <div name="languageCertificateDTOList[0].lang_cer_grade" id="lang_cer_grade0" class="form-control">${languageCertificate.lang_cer_grade}</div>
-                                                        <label for="lang_cer_grade0">등급 및 점수</label>
-                                                    </div>
-                                                    <div class="form-floating mb-3 col-sm">
-                                                        <fmt:formatDate value="${languageCertificate.lang_cer_date}" pattern="yyyy/MM/dd" var="formattedDate" />
-                                                        <div name="languageCertificateDTOList[0].lang_cer_date" id="lang_cer_date0" class="form-control">${formattedDate}</div>
-                                                        <label for="lang_cer_date0">취득일자</label>
+                                        <%-- 언어, 언어자격증 동일한 것끼리 분류하기 위한 조건문 --%>
+                                        <c:if test="${languageCertificate.lang_no == language.lang_no}">
+                                            <%-- 어학 자격증 --%>
+                                            <div id="langCerContainer">
+                                                <div class="langCerBlock">
+                                                    <div class="row g-3">
+                                                        <div class="form-floating mb-6 col-sm-6">
+                                                            <div name="languageCertificateDTOList[0].lang_cer_exam" id="lang_cer_exam0" class="form-control">${languageCertificate.lang_cer_exam}</div>
+                                                            <label for="lang_cer_exam0">어학 자격증명</label>
+                                                        </div>
+                                                        <div class="form-floating mb-3 col-sm">
+                                                            <div name="languageCertificateDTOList[0].lang_cer_grade" id="lang_cer_grade0" class="form-control">${languageCertificate.lang_cer_grade}</div>
+                                                            <label for="lang_cer_grade0">등급 및 점수</label>
+                                                        </div>
+                                                        <div class="form-floating mb-3 col-sm">
+                                                            <fmt:formatDate value="${languageCertificate.lang_cer_date}" pattern="yyyy/MM/dd" var="formattedDate" />
+                                                            <div name="languageCertificateDTOList[0].lang_cer_date" id="lang_cer_date0" class="form-control">${formattedDate}</div>
+                                                            <label for="lang_cer_date0">취득일자</label>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                            <%-- 마지막 루프가 아닌 경우에만 공백 추가 --%>
+                                            <c:if test="${not loof.last}">
+                                                <div class="mb-5"></div>
+                                            </c:if>
+                                        </c:if>
                                     </c:forEach>
                                 </div>
                             </div>
-                        </div>
-                    </c:forEach>
+                        </c:forEach>
+                    </div>
 
                     <c:if test="${resumeDetail.resume_orgname != null || resumeDetail.resume_url != null}">
                         <!-- 첨부파일 및 URL input -->

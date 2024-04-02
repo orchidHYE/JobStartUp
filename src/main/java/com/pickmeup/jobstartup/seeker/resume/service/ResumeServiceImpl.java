@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class ResumeServiceImpl implements ResumeService{
@@ -67,58 +69,16 @@ public class ResumeServiceImpl implements ResumeService{
 
     //이력서 작성
     @Override
-    public int insertResume(ResumeDTO resumeDTO, MultipartFile profileOrgNameFile, MultipartFile resumeOrgNameFile) throws IOException {
+    public int insertResume(ResumeDTO resumeDTO, MultipartFile profileOrgNameFile, MultipartFile resumeOrgNameFile) {
         logger.info("ResumeServiceImpl-insertResume() 진입");
 
-        if (!resumeDTO.getProfile_orgname().isEmpty()) {
+        //이력서 프로필 사진 업로드
+        String profileSaveName = uploadFile(profileOrgNameFile, "C:/jobStartUp_fileUpload/profile_img/", resumeDTO.getProfile_orgname());
+        resumeDTO.setProfile_savname(profileSaveName);
 
-            String profileDirectory = "C:/jobStartUp_fileUpload/profile_img/";
-            File directory = new File(profileDirectory);
-            if (!directory.exists()) {
-                directory.mkdirs();
-            }
-
-            UUID uuid = UUID.randomUUID();
-
-            String profileOrgName = resumeDTO.getProfile_orgname();
-            String profileSavName = resumeDTO.getProfile_orgname() + uuid;
-
-            resumeDTO.setProfile_orgname(profileOrgName);
-            resumeDTO.setProfile_savname(profileSavName);
-
-            File dest = new File (profileDirectory + profileSavName);
-            profileOrgNameFile.transferTo(dest);
-
-        }
-
-        if (resumeDTO.getResume_orgname() == null || resumeDTO.getResume_orgname().equals("")) {
-            resumeDTO.setResume_orgname("");
-            resumeDTO.setResume_savname("");
-        }
-
-        if (!resumeDTO.getResume_orgname().isEmpty()) {
-
-            String fileDirectory = "C:/jobStartUp_fileUpload/resumeFile/";
-            File directory = new File(fileDirectory);
-            if (!directory.exists()) {
-                directory.mkdirs();
-            }
-
-            UUID uuid = UUID.randomUUID();
-
-            String resumeOrgName = resumeDTO.getResume_orgname();
-            String resumeSavName = resumeDTO.getResume_orgname() + uuid;
-
-            resumeDTO.setResume_orgname(resumeOrgName);
-            resumeDTO.setResume_savname(resumeSavName);
-
-            File dest = new File (fileDirectory + resumeSavName);
-            resumeOrgNameFile.transferTo(dest);
-        }
-
-        if (resumeDTO.getResume_url() == null || resumeDTO.getResume_url().equals("")){
-            resumeDTO.setResume_url("");
-        }
+        //이력서 첨부파일 업로드
+        String resumeSaveName = uploadFile(resumeOrgNameFile, "C:/jobStartUp_fileUpload/resumeFile/", resumeDTO.getResume_orgname());
+        resumeDTO.setResume_savname(resumeSaveName);
 
         resumeRepository.insertResume(resumeDTO);
 
@@ -129,113 +89,71 @@ public class ResumeServiceImpl implements ResumeService{
         return resumeNo;
     }
 
-
-
     //이력서 부속테이블 작성
     @Override
     @Transactional
-    public void insertResumeAttached (ResumeDTO resumeDTO, MultipartFile profileOrgNameFile, MultipartFile resumeOrgNameFile) throws IOException {
+    public void insertResumeAttached (ResumeDTO resumeDTO, MultipartFile profileOrgNameFile, MultipartFile resumeOrgNameFile) {
         logger.info("ResumeServiceImpl-insertResumeAttached() 진입");
 
-        int getResumeSequence = this.insertResume(resumeDTO, profileOrgNameFile, resumeOrgNameFile);
+        int resumeNo = this.insertResume(resumeDTO, profileOrgNameFile, resumeOrgNameFile);
 
+        List<CareerDTO> careerDTOList = resumeDTO.getCareerDTOList().stream()
+                .map(career -> CareerDTO.builder()
+                        .resume_no(resumeNo)
+                        .career_company(career.getCareer_company())
+                        .business_type(career.getBusiness_type())
+                        .career_work(career.getCareer_work())
+                        .career_date(career.getCareer_date())
+                        .build())
+                .collect(Collectors.toList());
 
-        List<CareerDTO> careerDTOList = new ArrayList<>();
-        List<CertificateDTO> certificateDTOList = new ArrayList<>();
-        List<LanguageDTO> languageDTOList = new ArrayList<>();
-        List<LanguageCertificateDTO> languageCertificateDTOList = new ArrayList<>();
-        List<ResumeLocDTO> resumeLocDTOList = new ArrayList<>();
+        List<CertificateDTO> certificateDTOList = resumeDTO.getCertificateDTOList().stream()
+                .map(certificate -> CertificateDTO.builder()
+                        .resume_no(resumeNo)
+                        .cer_name(certificate.getCer_name())
+                        .cer_issuer(certificate.getCer_issuer())
+                        .cer_date(certificate.getCer_date())
+                        .build())
+                .collect(Collectors.toList());
 
-        for (CareerDTO resumeDTOInCareerDTO : resumeDTO.getCareerDTOList()) {
-            CareerDTO careerDTO = CareerDTO.builder()
-                    .resume_no(getResumeSequence)
-                    .career_company(resumeDTOInCareerDTO.getCareer_company())
-                    .business_type(resumeDTOInCareerDTO.getBusiness_type())
-                    .career_work(resumeDTOInCareerDTO.getCareer_work())
-                    .career_date(resumeDTOInCareerDTO.getCareer_date())
-                    .build();
+        List<Integer> langNoList = resumeDTO.getLanguageDTOList().stream()
+                .map(languageDTO -> {
+                    LanguageDTO updateLanguageDTO = LanguageDTO.builder()
+                                    .resume_no(resumeNo)
+                                    .lang_name(languageDTO.getLang_name())
+                                    .lang_level(languageDTO.getLang_level())
+                                    .build();
+                    resumeRepository.insertLanguage(Collections.singletonList(updateLanguageDTO));
+                    return resumeRepository.getLanguageSequence();
+                })
+                .collect(Collectors.toList());
 
-            careerDTOList.add(careerDTO);
-        }
+        List<LanguageCertificateDTO> languageCertificateDTOList = IntStream.range(0, langNoList.size())
+                .mapToObj(i -> LanguageCertificateDTO.builder()
+                        .lang_no(langNoList.get(i))
+                        .lang_cer_exam(resumeDTO.getLanguageCertificateDTOList().get(i).getLang_cer_exam())
+                        .lang_cer_grade(resumeDTO.getLanguageCertificateDTOList().get(i).getLang_cer_grade())
+                        .lang_cer_date(resumeDTO.getLanguageCertificateDTOList().get(i).getLang_cer_date())
+                        .build())
+                .collect(Collectors.toList());
 
-
-        for (CertificateDTO resumeDTOInCertificateDTO : resumeDTO.getCertificateDTOList()) {
-            CertificateDTO certificateDTO = CertificateDTO.builder()
-                    .resume_no(getResumeSequence)
-                    .cer_name(resumeDTOInCertificateDTO.getCer_name())
-                    .cer_issuer(resumeDTOInCertificateDTO.getCer_issuer())
-                    .cer_date(resumeDTOInCertificateDTO.getCer_date())
-                    .build();
-
-            certificateDTOList.add(certificateDTO);
-        }
-
-        List<Integer> langNoList = new ArrayList<>();
-
-        int size = resumeDTO.getLanguageDTOList().size();
-        logger.info("size:{}", size);
-
-
-
-
-
-        for (LanguageDTO resumeDTOInLanguageDTO : resumeDTO.getLanguageDTOList()) {
-
-                LanguageDTO languageDTO = LanguageDTO.builder()
-                        .resume_no(getResumeSequence)
-                        .lang_name(resumeDTOInLanguageDTO.getLang_name())
-                        .lang_level(resumeDTOInLanguageDTO.getLang_level())
-                        .build();
-
-                resumeRepository.insertLanguage(Collections.singletonList(languageDTO));
-                int langNo = resumeRepository.getLanguageSequence();
-                logger.info("langNo: {}", langNo);
-                langNoList.add(langNo);
-                logger.info("langNoList: {}", langNoList);
-
-        }
-
-        int languageCertificateResult = 0;
-
-
-        // langNoList와 resumeDTO.getLanguageCertificateDTOList()의 크기가 같다고 가정
-        for (int i = 0; i < langNoList.size(); i++) {
-            int langNoResult = langNoList.get(i);
-            logger.info("langNoList.size(): {}", langNoList.size());
-            logger.info("resumeDTO.getLanguageCertificateDTOList(): {}", resumeDTO.getLanguageCertificateDTOList());
-            logger.info("resumeDTO.getLanguageCertificateDTOList().get(i):{}", resumeDTO.getLanguageCertificateDTOList().get(i));
-            logger.info("resumeDTO.getLanguageCertificateDTOList().size(): {}", resumeDTO.getLanguageCertificateDTOList().size());
-
-            LanguageCertificateDTO resumeDTOInLCDTO = resumeDTO.getLanguageCertificateDTOList().get(i);
-
-            LanguageCertificateDTO languageCertificateDTO = LanguageCertificateDTO.builder()
-                    .lang_no(langNoResult)
-                    .lang_cer_exam(resumeDTOInLCDTO.getLang_cer_exam())
-                    .lang_cer_grade(resumeDTOInLCDTO.getLang_cer_grade())
-                    .lang_cer_date(resumeDTOInLCDTO.getLang_cer_date())
-                    .build();
-
-            languageCertificateResult = resumeRepository.insertLanguageCertificate(Collections.singletonList(languageCertificateDTO));
-        }
-
-        for (ResumeLocDTO resumeDTOInResumeLOCDTO : resumeDTO.getResumeLocDTOList()) {
-            ResumeLocDTO resumeLocDTO = ResumeLocDTO.builder()
-                    .resume_no(getResumeSequence)
-                    .loc_detail_code_num(resumeDTOInResumeLOCDTO.getLoc_detail_code_num())
-                    .build();
-
-            resumeLocDTOList.add(resumeLocDTO);
-        }
+        List<ResumeLocDTO> resumeLocDTOList = resumeDTO.getResumeLocDTOList().stream()
+                .map(loc -> ResumeLocDTO.builder()
+                        .resume_no(resumeNo)
+                        .loc_detail_code_num(loc.getLoc_detail_code_num())
+                        .build())
+                .collect(Collectors.toList());
 
         int careerResult = resumeRepository.insertCareer(careerDTOList);
         int certificateResult = resumeRepository.insertCertificate(certificateDTOList);
-
+        int languageCertificateResult = resumeRepository.insertLanguageCertificate(languageCertificateDTOList);
         int resumeLocResult = resumeRepository.insertResumeLoc(resumeLocDTOList);
 
-        if (careerResult >= 1 && certificateResult >= 1 &&
-                languageCertificateResult >= 1 && resumeLocResult >= 1) {
+        logger.info("careerResult: {} / certificateResult: {} / languageCertificateResult: {} / resumeLocResult: {}", careerResult, certificateResult, languageCertificateResult, resumeLocResult);
 
-        } else {
+        if (careerResult < 1 || certificateResult < 1 ||
+                languageCertificateResult < 1 || resumeLocResult < 1) {
+
             throw new RuntimeException("트랜잭션 실패: 하나 이상의 작업이 실패했습니다.");
         }
 
@@ -363,6 +281,29 @@ public class ResumeServiceImpl implements ResumeService{
         List<LocDTO> result = resumeRepository.selectDetailName(detail_code_num);
         logger.info("result : {}", result);
         return result;
+    }
+
+    //파일 업로드 공통 메서드
+    private String uploadFile (MultipartFile file, String directory, String originalName) {
+        try {
+            if (file == null || file.isEmpty()) {
+                return "";
+            }
+
+        File dir = new File (directory);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        UUID uuid = UUID.randomUUID();
+        String saveName = originalName + uuid;
+        File dest = new File (directory + saveName);
+        file.transferTo(dest);
+
+        return saveName;
+        } catch (IOException e) {
+            throw  new RuntimeException("파일 업로드 오류", e);
+        }
     }
 
 }
