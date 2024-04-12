@@ -8,6 +8,10 @@ build/
 *.properties
 *.yml
 
+### log ###
+logs/
+logback.xml
+
 ### STS ###
 .apt_generated
 .classpath
